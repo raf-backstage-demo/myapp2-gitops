@@ -1,0 +1,38 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: raffa-qrs-dev
+  namespace: myapp2-build
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io  
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/raf-backstage-demo/myapp2-gitops
+    targetRevision: HEAD
+    path: ./components/raffa-qrs/chart
+    helm:
+      valueFiles:
+        - ../value-files/values-dev.yaml
+      values: |
+        quarkus-run: 
+          image:
+            tag: dummy
+          baseDomain: control-cluster-raffa.demo.red-chesterfield.com  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp2-dev
+  syncPolicy:
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=false
+    - RespectIgnoreDifferences=true
+    - ApplyOutOfSyncOnly=true    
+    retry:
+      backoff:
+        duration: 5s # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
+        factor: 2 # a factor to multiply the base duration after each failed retry
+        maxDuration: 10m # the maximum amount of time allowed for the backoff strategy                      
