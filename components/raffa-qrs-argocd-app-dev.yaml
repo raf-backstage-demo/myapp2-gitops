@@ -18,7 +18,7 @@ spec:
       values: |
         quarkus-run: 
           image:
-            tag: dummy
+            tag: 264dbafe7022069a247903112954954b15e727be
           baseDomain: control-cluster-raffa.demo.red-chesterfield.com  
   destination:
     server: https://kubernetes.default.svc
